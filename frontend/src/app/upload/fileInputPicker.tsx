@@ -5,14 +5,32 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 
+
+async function uploadFile(file: File) {
+  const response = await fetch("/api/upload", {
+    method: "GET",
+  })
+  if (!response.ok) {
+    throw new Error(`upload failed with status: ${response.status}`)
+  }
+  const data = await response.json()
+  console.log("response: ", data)
+  // const response = await fetch("/api/upload", {
+  //   method: "POST",
+  // })
+  // if (!response.ok) {
+  //   throw new Error(`upload failed with status: ${response.status}`)
+  // }
+  // console.log("response: ", response)
+}
+
+
 type FileMetaDataProps = {
   file: File | null
 }
 
 function FileMetaData({ file }: FileMetaDataProps) {
-  if (!file) {
-    return
-  }
+  if (!file) return
   return (
     <div className="grid grid-cols-2 text-xs gap-0 w-fit p-2 bg-white border rounded">
       <p className="font-semibold">Name:</p>
@@ -39,12 +57,9 @@ export default function FilePicker() {
   }
 
   const handleUploadFile = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (!file) {
-      return
-    }
-    toast({
-      title: `Uploading '${file.name}'`,
-    })
+    if (!file) return
+    uploadFile(file)
+    toast({title: `Uploading '${file.name}'`})
   }
 
   return (
